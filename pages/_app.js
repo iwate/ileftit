@@ -1,11 +1,11 @@
-import '../styles/reset.css';
-import '../styles/main.css';
-
-// This default export is required in a new `pages/_app.js` file.
-export default function MyApp({ Component, pageProps }) {
+import { SessionProvider } from "next-auth/react"
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}) {
   return (
-    <div>
+    <SessionProvider session={session}>
       <Component {...pageProps} />
-    </div>
-  );
+    </SessionProvider>
+  )
 }

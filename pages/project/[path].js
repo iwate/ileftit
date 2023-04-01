@@ -74,15 +74,7 @@ function Project({ project }) {
   );
 }
 
-export async function getStaticPaths() {
-  const paths = projects.map((project) => ({
-    params: { path: project.slug },
-  }));
-
-  return { paths, fallback: false };
-}
-
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
   const project = projects.find((proj) => proj.slug === params.path);
   const res = await fetch(`https://api.github.com/repos/${project.path}`);
   const data = await res.json();
