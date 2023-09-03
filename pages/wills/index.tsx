@@ -317,11 +317,11 @@ export default function Home({ items }) {
 
 export async function getServerSideProps(req, res) {
   const token = await getToken(req);
-  if (!token.uid) {
+  if (!token?.uid) {
     return {
       redirect: {
         permanent: false,
-        destination: '/api/auth/signin',
+        destination: '/',
       },
     };
   }
