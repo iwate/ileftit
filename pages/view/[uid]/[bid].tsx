@@ -1,11 +1,11 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useLocale } from '../../i18n/hooks';
-import { themeFont } from '../../utils/fonts';
+import { useLocale } from '../../../i18n/hooks';
+import { themeFont } from '../../../utils/fonts';
 import { useRouter } from 'next/router';
-import { CryptoService } from '../../src/client/crypto';
-import { retrieve } from '../../src/server/model';
+import { CryptoService } from '../../../src/client/crypto';
+import { retrieve } from '../../../src/server/model';
 import { useState } from 'react';
-import { Button } from '../../components/Button';
+import { Button } from '../../../components/Button';
 import Head from 'next/head';
 
 type WillState =
@@ -33,6 +33,13 @@ type Inputs = {
   secret: string;
 };
 
+const fetcher = (url) =>
+  fetch(url).then((res) =>
+    res.ok
+      ? res.json().then((o) => ({ ...o, state: 'open' }))
+      : { state: 'close' }
+  );
+
 export default function Page({ state }) {
   const { t, locale } = useLocale();
   const fmt = new Intl.DateTimeFormat(locale, {
@@ -43,6 +50,7 @@ export default function Page({ state }) {
     minute: '2-digit',
   });
   const router = useRouter();
+  const ep = `/api/wills/${router.query.bid}/?uid=${router.query.uid}`;
   const [data, mutate] = useState<WillState>(state);
   const [loading, setLoading] = useState(null);
   const {
@@ -55,7 +63,7 @@ export default function Page({ state }) {
     try {
       const crypto = await CryptoService.create(form.secret);
       const password = crypto.getLoginPassword();
-      const res = await fetch(state.ep, {
+      const res = await fetch(ep, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -182,20 +190,14 @@ export default function Page({ state }) {
 }
 
 export async function getServerSideProps(req, res) {
-  const [bid, uid] = req.query.id.split('@');
-  if (!bid || !uid) {
-    return {
-      notFound: true,
-    };
-  }
-  const ep = `/api/wills/${bid}?uid=${uid}`;
+  const uid = req.query.uid as string;
+  const bid = req.query.bid as string;
   const will = await retrieve(uid, bid);
 
   if (will === null) {
     return {
       props: {
         state: {
-          ep,
           status: 'close',
           verified: false,
         },
@@ -206,7 +208,6 @@ export async function getServerSideProps(req, res) {
   return {
     props: {
       state: {
-        ep,
         status: will.status,
         verified: false,
       },
