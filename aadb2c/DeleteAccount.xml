@@ -1,0 +1,136 @@
+<TrustFrameworkPolicy
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
+    PolicySchemaVersion="0.3.0.0"
+    TenantId="ileftit.onmicrosoft.com"
+    PolicyId="B2C_1A_DeleteAccount"
+    PublicPolicyUri="http://ileftit.onmicrosoft.com/B2C_1A_DeleteAccount">
+
+    <BasePolicy>
+        <!-- This policy is based on the B2C_1A_TrustFrameworkBase policy -->
+        <TenantId>ileftit.onmicrosoft.com</TenantId>
+        <PolicyId>B2C_1A_TrustFrameworkBase</PolicyId>
+    </BasePolicy>
+
+    <BuildingBlocks>
+        <ClaimsSchema>
+            <!-- Define the claim type for the user's object ID -->
+            <ClaimType Id="objectId">
+                <DisplayName>Object ID</DisplayName>
+                <DataType>string</DataType>
+                <UserInputType>Readonly</UserInputType>
+            </ClaimType>
+        </ClaimsSchema>
+
+        <Actions>
+            <!-- Define the self-asserted technical profile to confirm deletion -->
+            <Action Id="ConfirmDeletion">
+                <ValidationClaimsExchange>
+                    <ValidationClaimsExchangeTechnicalProfile
+                        TechnicalProfileReferenceId="SelfAsserted-ConfirmDeletion" />
+                </ValidationClaimsExchange>
+            </Action>
+
+            <!-- Define the REST API call to delete the user's account -->
+            <Action Id="DeleteAccount">
+                <ValidationClaimsExchange>
+                    <ValidationClaimsExchangeTechnicalProfile
+                        TechnicalProfileReferenceId="REST-API-DeleteAccount" />
+                </ValidationClaimsExchange>
+            </Action>
+        </Actions>
+
+        <ClaimsTransformations>
+            <!-- Define the claims transformation to get the user's object ID -->
+            <ClaimsTransformation Id="GetObjectId" TransformationMethod="GetClaimFromJwt">
+                <InputClaims>
+                    <InputClaim ClaimTypeReferenceId="jwt" PartnerClaimType="objectId" />
+                </InputClaims>
+                <OutputClaims>
+                    <OutputClaim ClaimTypeReferenceId="objectId"
+                        TransformationClaimType="outputClaim" />
+                </OutputClaims>
+            </ClaimsTransformation>
+        </ClaimsTransformations>
+
+        <TrustFrameworkExtensions>
+            <PolicySchemaExtensions>
+                <!-- Define the technical profile to confirm deletion -->
+                <PersistedClaim ClaimTypeReferenceId="objectId" />
+                <TechnicalProfile Id="SelfAsserted-ConfirmDeletion">
+                    <DisplayName>Confirm Deletion</DisplayName>
+                    <Protocol Name="Proprietary"
+                        Handler="Web.TPEngine.Providers.AssertionConfirmationProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                    <Metadata>
+                        <Item Key="ContentDefinitionReferenceId">api.selfasserted</Item>
+                    </Metadata>
+                    <OutputClaims>
+                        <OutputClaim ClaimTypeReferenceId="objectId" Required="true" />
+                    </OutputClaims>
+                </TechnicalProfile>
+
+                <!-- Define the technical profile to call the REST API to delete the user's account -->
+                <TechnicalProfile Id="REST-API-DeleteAccount">
+                    <DisplayName>Delete Account</DisplayName>
+                    <Protocol Name="Proprietary"
+                        Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+                    <Metadata>
+                        <Item Key="ServiceUrl">https://[your API endpoint]/delete-account</Item>
+                        <Item Key="SendClaimsIn">Body</Item>
+                        <Item Key="AuthenticationType">None</Item>
+                        <Item Key="AllowInsecureAuthInProduction">true</Item>
+                        <Item Key="ClaimsToSend">
+                            <Claim Type="objectId" />
+                        </Item>
+                    </Metadata>
+                    <InputClaims>
+                        <InputClaim ClaimTypeReferenceId="objectId" />
+                    </InputClaims>
+                </TechnicalProfile>
+            </PolicySchemaExtensions>
+        </TrustFrameworkExtensions>
+    </BuildingBlocks>
+    <UserJourneys>
+        <UserJourney Id="DeleteAccount">
+            <OrchestrationSteps>
+                <!-- Display the confirmation page -->
+                <OrchestrationStep Order="1" Type="ClaimsExchange">
+                    <ClaimsExchanges>
+                        <ClaimsExchange Id="ConfirmDeletion"
+                            TechnicalProfileReferenceId="ConfirmDeletion" />
+                    </ClaimsExchanges>
+                </OrchestrationStep>
+                <!-- Call the REST API to delete the user's account -->
+                <OrchestrationStep Order="2" Type="ClaimsExchange">
+                    <ClaimsExchanges>
+                        <ClaimsExchange Id="DeleteAccount"
+                            TechnicalProfileReferenceId="DeleteAccount" />
+                    </ClaimsExchanges>
+                </OrchestrationStep>
+
+                <!-- Show the user a confirmation message -->
+                <OrchestrationStep Order="3" Type="ClaimsExchange">
+                    <ClaimsExchanges>
+                        <ClaimsExchange Id="ShowConfirmation"
+                            TechnicalProfileReferenceId="SelfAsserted-ShowConfirmation" />
+                    </ClaimsExchanges>
+                </OrchestrationStep>
+
+                <!-- Sign out the user -->
+                <OrchestrationStep Order="4" Type="CombinedSignInAndSignUp">
+                    <Preconditions>
+                        <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+                            <Value>objectId</Value>
+                            <Action>SkipThisOrchestrationStep</Action>
+                        </Precondition>
+                    </Preconditions>
+                    <ClaimsProviderSelections>
+                        <ClaimsProviderSelection TargetClaimsExchangeId="AADUserWriteUsingObjectId" />
+                    </ClaimsProviderSelections>
+                    <CombinedSignInAndSignUpApplicationTechnicalProfile ReferenceId="PolicyProfile" />
+                </OrchestrationStep>
+            </OrchestrationSteps>
+        </UserJourney>
+    </UserJourneys>
+</TrustFrameworkPolicy>
