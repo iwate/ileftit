@@ -9,8 +9,8 @@ import { useState } from 'react';
 import { Button } from '../../../components/Button';
 
 type Inputs = {
-  confirm: string
-}
+  confirm: string;
+};
 
 export default function Page({ bid, title }) {
   const { t } = useLocale();
@@ -20,54 +20,69 @@ export default function Page({ bid, title }) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>()
+  } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (data.confirm === 'yes') {
       setLoading('delete');
       try {
         const res = await fetch(`/api/wills/${bid}`, {
-          method: 'DELETE'
+          method: 'DELETE',
         });
-        if (res.ok){
+        if (res.ok) {
           router.push('/wills');
         }
-      }
-      finally {
+      } finally {
         setLoading(null);
       }
     }
-  }
+  };
   return (
     <main>
       <form className="form-vertical" onSubmit={handleSubmit(onSubmit)}>
         <dl>
-          <dt><span className={themeFont.className}>for</span></dt>
-          <dd><input value={title} readOnly/></dd>
+          <dt>
+            <span className={themeFont.className}>for</span>
+          </dt>
+          <dd>
+            <input value={title} readOnly />
+          </dd>
         </dl>
         <dl>
           <dt></dt>
           <dd>
             <p>{t.MessageDelete}</p>
-            <input {...register('confirm', { required: true, pattern: /^yes$/ })}/>
+            <input
+              {...register('confirm', { required: true, pattern: /^yes$/ })}
+            />
             {errors.confirm?.type === 'required' && <p>required</p>}
-            {errors.confirm?.type === 'pattern' && <p>Please input "yes"</p>}
+            {errors.confirm?.type === 'pattern' && (
+              <p>Please input &quot;yes&quot;</p>
+            )}
           </dd>
         </dl>
         <dl>
           <dt></dt>
           <dd>
-            <Button type="submit" loading={loading==='delete'} disabled={loading}>{t.ActionDelete}</Button>
+            <Button
+              type="submit"
+              loading={loading === 'delete'}
+              disabled={loading}
+            >
+              {t.ActionDelete}
+            </Button>
           </dd>
         </dl>
         <dl>
           <dt></dt>
           <dd>
-            <Link href="/wills" className="btn-text text-center">{t.ActionBack}</Link>
+            <Link href="/wills" className="btn-text text-center">
+              {t.ActionBack}
+            </Link>
           </dd>
         </dl>
       </form>
     </main>
-  )
+  );
 }
 
 export async function getServerSideProps(req, res) {
@@ -76,17 +91,17 @@ export async function getServerSideProps(req, res) {
     return {
       redirect: {
         permanent: false,
-        destination: '/api/auth/signin'
-      }
-    }
+        destination: '/api/auth/signin',
+      },
+    };
   }
   const item = await retrieve(String(token.uid), req.query.bid);
   if (!item) {
     return {
-      notFound: true
-    }
+      notFound: true,
+    };
   }
   return {
-    props: { bid: req.query.bid, title: item.title }
-  }
+    props: { bid: req.query.bid, title: item.title },
+  };
 }
