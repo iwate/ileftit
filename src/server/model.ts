@@ -11,7 +11,7 @@ import {
 } from './repository';
 import { ulid } from 'ulid';
 
-const SECRET = () => Buffer.from(process.env.ILEFTIT_SECRET, 'hex');
+const SECRET = Buffer.from(process.env.ILEFTIT_SECRET, 'hex');
 
 const repo = new AzureStorageRepository();
 const logger = new AzureStorageLogger();
@@ -40,7 +40,7 @@ class Will {
     if (blob === null) {
       return null;
     }
-    return decrypt(SECRET(), blob);
+    return decrypt(SECRET, blob);
   }
 
   public authorize(password: string) {
@@ -50,7 +50,7 @@ class Will {
   }
 
   public async replace(title: string, body: Buffer) {
-    const blob = encrypt(SECRET(), body);
+    const blob = encrypt(SECRET, body);
     this.meta.title = title;
     await repo.replace(this.uid, this.bid, this.meta, blob);
   }
@@ -93,7 +93,7 @@ export async function add(
   const salt = randomBytes(32).toString('hex');
   const bid = crypto.randomUUID().replaceAll('-', '');
   const blobPath = `${uid}/${bid}.bin`;
-  const blob = encrypt(SECRET(), body);
+  const blob = encrypt(SECRET, body);
   const meta = {
     title,
     openAt,
