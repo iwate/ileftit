@@ -3,13 +3,12 @@ import {
   createDecipheriv,
   randomBytes,
   createHash,
-} from 'crypto';
+} from 'node:crypto';
 import {
   AzureStorageLogger,
   AzureStorageRepository,
   Metadata,
 } from './repository';
-import { ulid } from 'ulid';
 
 const SECRET = Buffer.from(process.env.ILEFTIT_SECRET, 'hex');
 
