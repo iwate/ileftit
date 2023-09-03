@@ -3,7 +3,8 @@ import {
   createDecipheriv,
   randomBytes,
   createHash,
-} from 'node:crypto';
+  randomUUID,
+} from 'crypto';
 import {
   AzureStorageLogger,
   AzureStorageRepository,
@@ -90,7 +91,7 @@ export async function add(
   password: string
 ) {
   const salt = randomBytes(32).toString('hex');
-  const bid = crypto.randomUUID().replaceAll('-', '');
+  const bid = randomUUID().replaceAll('-', '');
   const blobPath = `${uid}/${bid}.bin`;
   const blob = encrypt(SECRET, body);
   const meta = {
