@@ -64,7 +64,7 @@ export default function Page() {
   };
   const gotoTop = () => router.push('/');
   const result = `## URL 
-${location.host}/view/${created?.uid}/${created?.bid}
+https://${location.host}/view/${created?.uid}/${created?.bid}
 
 ## Password
 ${created?.secret}`;
