@@ -101,7 +101,7 @@ export async function add(
     passwordSalt: salt,
     passwordHash: calcHash(salt + password),
   };
-  await repo.add(uid, bid, meta, body);
+  await repo.add(uid, bid, meta, blob);
   return new Will(uid, bid, meta);
 }
 
