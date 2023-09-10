@@ -12,7 +12,7 @@ export default function handle(req: NextApiRequest, res: NextApiResponse) {
 }
 
 async function get(req: NextApiRequest, res: NextApiResponse) {
-  const endpoint = req.query.ep as string;
+  const endpoint = req.query['@ep'] as string;
   const token = await getToken({ req });
   if (!token?.uid) {
     res.status(401).json({

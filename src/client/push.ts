@@ -17,7 +17,7 @@ export async function updateSubscriptionIfExist(
         return [reg, sub];
       }
 
-      const res = await fetch(`/api/sub/${encodeURIComponent(sub.endpoint)}`);
+      const res = await fetch(`/api/sub/@ep/?@ep=${encodeURIComponent(sub.endpoint)}`);
       if (res.ok) {
         return [reg, sub];
       }
