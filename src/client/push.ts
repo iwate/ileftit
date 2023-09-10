@@ -12,10 +12,7 @@ export async function updateSubscriptionIfExist(
     const reg = await navigator.serviceWorker.ready;
     let sub = await reg.pushManager.getSubscription();
     if (sub) {
-      if (
-        sub.expirationTime &&
-        !(Date.now() > sub.expirationTime - 7 * DAY)
-      ) {
+      if (sub.expirationTime && !(Date.now() > sub.expirationTime - 7 * DAY)) {
         sub = await subscribe(reg, publicKey);
         return [reg, sub];
       }
