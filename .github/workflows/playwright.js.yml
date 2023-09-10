@@ -34,4 +34,9 @@ jobs:
       run: npm run build:testlib
     - name: Run your tests
       run: npm run playwright_test
-      
+      env:
+        ILEFTIT_SECRET: ${{ secrets.ILEFTIT_SECRET }}
+        AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+        AZURE_STORAGE_CONTAINER_NAME: ${{ secrets.AZURE_STORAGE_CONTAINER_NAME }}
+        AZURE_STORAGE_LOG_TABLE_NAME: ${{ secrets.AZURE_STORAGE_LOG_TABLE_NAME }}
+    
