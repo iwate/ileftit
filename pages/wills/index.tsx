@@ -346,10 +346,11 @@ export default function Home({ items, publicKey }) {
           <li>@username</li>
           <li>...</li>
           <li>
-            All sponsors can be listed here.
+            <small>All sponsors can be listed here.<wbr/>
             <Link href="https://github.com/sponsors/iwate">
               https://github.com/sponsors/iwate
             </Link>
+            </small>
           </li>
         </ul>
       </section>

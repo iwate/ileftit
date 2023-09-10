@@ -382,3 +382,9 @@ footer ul {
   flex-wrap: wrap;
   gap: 8px;
 }
+.sponsors ul li {
+  text-align: center;
+}
+small {
+  font-size: 0.75em;
+}
