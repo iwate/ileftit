@@ -29,5 +29,10 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+public/sw.js
+public/sw..js.map
+public/workbox-*.js
+public/workbox-*.js.map
+public/worker-*.js
 test/build/
 memo.txt
