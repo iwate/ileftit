@@ -195,7 +195,7 @@ label input:not([type=checkbox],[type=radio]) {
 .form-vertical dd p {
   margin: 8px 0;
   padding: 0 8px;
-  font-size: 10px;
+  font-size: 0.5em;
 }
 
 .w100 {
@@ -230,7 +230,7 @@ hr {
 }
 
 table {
-  font-size: 10px;
+  font-size: 0.5em;
   width: 100%;
 }
 th, td {
@@ -243,7 +243,7 @@ thead tr {
   margin-bottom: 16px;
 }
 caption {
-  font-size: 12px;
+  font-size: 0.75em;
   padding: 16px 0;
 }
 
@@ -258,7 +258,7 @@ caption {
 footer {
   display: flex;
   justify-content: center;
-  font-size: 10px;
+  font-size: 0.5em;
   gap: 32px;
   padding: 32px 0;
   margin-top: 32px;
@@ -279,7 +279,7 @@ footer ul {
 #lp p,
 #lp dt,
 #lp dd {
-  font-size: 12px;
+  font-size: 0.75em;
   line-height: 24px;
 }
 #lp dt {
@@ -297,12 +297,12 @@ footer ul {
 
 #lp h1 {
   text-align: center;
-  font-size: 16px;
+  font-size: 1em;
   margin-bottom: 48px;
 }
 
 #lp h2 {
-  font-size: 14px;
+  font-size: 0.9em;
   padding: 24px 0;
 }
 
@@ -313,7 +313,7 @@ footer ul {
 }
 
 .page p {
-  font-size: 12px;
+  font-size: 0.75em;
   line-height: 24px;
 }
 
@@ -324,7 +324,7 @@ footer ul {
 }
 
 .page h2 {
-  font-size: 14px;
+  font-size: 0.9em;
   font-weight: bold;
   padding: 24px 0 8px;
 }
@@ -339,8 +339,8 @@ footer ul {
 }
 
 .page li {
-  font-size: 10.5px;
-  line-height: 21px;
+  font-size: 0.75em;
+  line-height: 2.4em;
 }
 
 .pr {
@@ -363,12 +363,12 @@ footer ul {
 .pr ul li p {
   grid-column: 2/3;
   grid-row: 1/2;
-  font-size: 12px;
+  font-size: 0.75em;
 }
 .pr ul li a {
   grid-column: 2/3;
   grid-row: 2/3;
-  font-size: 12px;
+  font-size: 0.75em;
   padding-left: 1em;
 }
 
