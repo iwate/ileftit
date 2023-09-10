@@ -3,6 +3,7 @@ const withPWA = require('next-pwa')({
 });
 
 module.exports = withPWA({
+    output:"standalone",
     trailingSlash: true,
     i18n: {
         locales: ['en', 'ja'],
