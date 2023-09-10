@@ -20,5 +20,5 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', function (ev) {
     ev.notification.close();
-    clients.openWindow('/');
+    clients.openWindow('/wills/');
 });
