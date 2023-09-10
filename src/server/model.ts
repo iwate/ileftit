@@ -8,6 +8,9 @@ import {
 import {
   AzureStorageLogger,
   AzureStorageRepository,
+  AzureStorageSubscriptionStore,
+  ILogger,
+  ISubscriptionStore,
   Metadata,
 } from './repository';
 
@@ -15,6 +18,7 @@ const SECRET = Buffer.from(process.env.ILEFTIT_SECRET, 'hex');
 
 const repo = new AzureStorageRepository();
 const logger = new AzureStorageLogger();
+const subs = new AzureStorageSubscriptionStore();
 
 class Will {
   private meta: Metadata;
@@ -105,8 +109,8 @@ export async function add(
   return new Will(uid, bid, meta);
 }
 
-export const log = logger.log.bind(logger);
-export const history = logger.list.bind(logger);
+export const log: ILogger['log'] = logger.log.bind(logger);
+export const history: ILogger['list'] = logger.list.bind(logger);
 
 function calcHash(plain: string) {
   return createHash('sha256').update(plain).digest('hex');
@@ -134,4 +138,53 @@ function decrypt(key: Buffer, data: Buffer) {
   decipher.setAuthTag(data.subarray(12, 28));
   const decrypted = [decipher.update(data.subarray(28)), decipher.final()];
   return Buffer.concat(decrypted);
+}
+
+export const setSubscription: ISubscriptionStore['set'] = subs.set.bind(subs);
+export const getSubscription: ISubscriptionStore['get'] = subs.get.bind(subs);
+export async function* listSubscriptions(
+  from: Date = new Date(),
+  days: number = 7
+) {
+  const returned = {};
+  const fromTime = from.getTime();
+  const to = new Date(fromTime + days * DAY);
+  for await (let { uid, openAt } of repo.filter(from, to)) {
+    if (
+      listSubscriptionsNecessaryToPushPredicator(fromTime, openAt.getTime())
+    ) {
+      if (!returned[uid]) {
+        returned[uid] = true;
+        const items = await subs.list(uid);
+        for (let { json } of items) {
+          yield json;
+        }
+      }
+    }
+  }
+}
+
+const HOUR = 60 * 60 * 1000;
+const DAY = 24 * HOUR;
+export function listSubscriptionsNecessaryToPushPredicator(
+  now: number,
+  openAt: number
+) {
+  const dt = Math.floor((openAt - now) / HOUR);
+  if (dt <= 6) {
+    return true;
+  }
+  const dt$2 = dt % 2;
+  if (dt <= 12 && dt$2 == 0) {
+    return true;
+  }
+  const dt$6 = dt % 6;
+  if (dt <= 24 && dt$6 == 0) {
+    return true;
+  }
+  const dt$24 = dt % 24;
+  if (dt$24 == 0) {
+    return true;
+  }
+  return false;
 }

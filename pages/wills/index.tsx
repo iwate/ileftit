@@ -13,6 +13,7 @@ import { getToken } from 'next-auth/jwt';
 import { list } from '../../src/server/model';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
+import { subscribe, updateSubscriptionIfExist } from '../../src/client/push';
 
 const fetcher = (path) => fetch(path).then((res) => res.json());
 const extend = (bids: string[], hours: number) => {
@@ -35,7 +36,6 @@ const extend = (bids: string[], hours: number) => {
 
 const PAGE_SIZE = 3;
 const getKey = (pageIndex, prev) => {
-  console.log(prev);
   if (prev && !prev.items && prev.items.length === 0) return null;
   if (pageIndex === 0) return `/api/logs/?size=${PAGE_SIZE}`;
   return `/api/logs?size=${PAGE_SIZE}&skiptoken=${
@@ -146,15 +146,56 @@ function OpenAt({ date }: { date: Date }) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const dt = date.getTime() - today.getTime();
+  const label = `${t.LabelOpenAt} ${normalize(
+    dt > 0 && dt < $1day ? fmt2.format(date) : fmt1.format(date)
+  )}`;
+  return <small>{label}</small>;
+}
+
+function NotificationForm({ publicKey }) {
+  const { t } = useLocale();
+  const [loading, setLoading] = useState(null);
+  const [[reg, sub], setState] = useState<
+    [reg: ServiceWorkerRegistration | null, sub: PushSubscription | null]
+  >([null, null]);
+  useEffect(() => {
+    if (publicKey) {
+      updateSubscriptionIfExist(publicKey).then(setState);
+    }
+  }, [publicKey]);
+  const getNotification = async () => {
+    setLoading('subscribe');
+    try {
+      const result = await subscribe(reg, publicKey);
+      setState([reg, result]);
+    } finally {
+      setLoading(null);
+    }
+  };
   return (
-    <small>
-      {t.LabelOpenAt}
-      {normalize(dt > 0 && dt < $1day ? fmt2.format(date) : fmt1.format(date))}
-    </small>
+    <>
+      {reg && !sub && (
+        <>
+          <hr />
+          <dl>
+            <dt></dt>
+            <dd>
+              <Button
+                loading={loading === 'subscribe'}
+                disabled={loading}
+                onClick={getNotification}
+              >
+                {t.ActionGetNotification}
+              </Button>
+            </dd>
+          </dl>
+        </>
+      )}
+    </>
   );
 }
 
-export default function Home({ items }) {
+export default function Home({ items, publicKey }) {
   const { t } = useLocale();
   const router = useRouter();
   const [loading, setLoading] = useState(null);
@@ -295,6 +336,7 @@ export default function Home({ items }) {
       )}
       <hr />
       <History />
+      <NotificationForm publicKey={publicKey} />
       <hr />
       <section className="sponsors">
         <h2>Sponsored by</h2>
@@ -333,6 +375,7 @@ export async function getServerSideProps(req, res) {
         title: o.title,
         openAt: o.openAt.toISOString(),
       })),
+      publicKey: process.env.WEBPUSH_PUBLIC_KEY,
     },
   };
 }

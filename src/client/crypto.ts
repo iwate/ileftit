@@ -1,3 +1,5 @@
+import { fromBase64, toBase64 } from './base64';
+
 type Base64String = string;
 type AESGCM = {
   name: 'AES-GCM';
@@ -124,15 +126,4 @@ export class CryptoService {
   public getLoginPassword() {
     return this.loginPassword;
   }
-}
-
-function toBase64(data: Uint8Array) {
-  return btoa([...data].map((n) => String.fromCharCode(n)).join('')).replaceAll(
-    '=',
-    ''
-  );
-}
-
-function fromBase64(data: string) {
-  return new Uint8Array([...atob(data)].map((s) => s.charCodeAt(0)));
 }

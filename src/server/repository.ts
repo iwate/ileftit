@@ -1,5 +1,6 @@
 import { TableClient, TableEntityResult, odata } from '@azure/data-tables';
 import { BlobServiceClient } from '@azure/storage-blob';
+import { createHash } from 'crypto';
 
 export type Metadata = {
   title: string;
@@ -10,6 +11,7 @@ export type Metadata = {
 };
 
 export type Summary = {
+  uid: string;
   bid: string;
   title: string;
   openAt: Date;
@@ -27,6 +29,7 @@ export interface IRepository {
     blob: Buffer
   ): Promise<void>;
   remove(uid: string, bid: string, meta: Metadata): Promise<void>;
+  filter(from: Date, to: Date);
 }
 
 export class AzureStorageRepository implements IRepository {
@@ -47,14 +50,30 @@ export class AzureStorageRepository implements IRepository {
       queryOptions: { filter: odata`PartitionKey eq ${uid}` },
     });
 
-    for await (const { rowKey, title, openAt } of entities) {
+    for await (const { partitionKey, rowKey, title, openAt } of entities) {
       result.push({
+        uid: partitionKey,
         bid: rowKey,
         title,
         openAt,
       });
     }
     return result;
+  }
+
+  async *filter(from: Date, to: Date): AsyncGenerator<Summary> {
+    const entities = this.tableClient.listEntities<Metadata>({
+      queryOptions: { filter: odata`openAt ge ${from} and openAt le ${to}` },
+    });
+
+    for await (const { partitionKey, rowKey, title, openAt } of entities) {
+      yield {
+        uid: partitionKey,
+        bid: rowKey,
+        title,
+        openAt,
+      };
+    }
   }
 
   async get(uid: string, bid: string): Promise<Metadata> {
@@ -200,6 +219,83 @@ export class AzureStorageLogger implements ILogger {
     for await (const record of pages) {
       await this.tableClient.deleteEntity(record.partitionKey, record.rowKey);
     }
+    return result;
+  }
+}
+
+type Subscription = {
+  json: string;
+  expirationTime: number;
+};
+export interface ISubscriptionStore {
+  set(
+    uid: string,
+    json: string,
+    endpoint: string,
+    expirationTime: number
+  ): Promise<void>;
+  get(uid: string, endpoint: string): Promise<string>;
+  list(uid: string): Promise<Subscription[]>;
+}
+export class AzureStorageSubscriptionStore implements ISubscriptionStore {
+  private tableClient = TableClient.fromConnectionString(
+    process.env.AZURE_STORAGE_CONNECTION_STRING,
+    process.env.AZURE_STORAGE_SUBSCRIPTION_TABLE_NAME
+  );
+
+  async set(
+    uid: string,
+    json: string,
+    endpoint: string,
+    expirationTime: number
+  ): Promise<void> {
+    const rowKey = createHash('sha1').update(endpoint).digest('hex');
+    await this.tableClient.upsertEntity<Subscription>({
+      partitionKey: uid,
+      rowKey,
+      json,
+      expirationTime,
+    });
+  }
+  async get(
+    uid: string,
+    endpoint: string,
+    now: number = Date.now()
+  ): Promise<string> {
+    const rowKey = createHash('sha1').update(endpoint).digest('hex');
+    const entity = await this.tableClient.getEntity<Subscription>(uid, rowKey);
+    if (entity.expirationTime !== null && now >= entity.expirationTime) {
+      return null;
+    }
+    return entity?.json;
+  }
+  async list(uid: string, now: number = Date.now()): Promise<Subscription[]> {
+    const result: Subscription[] = [];
+    const removal: TableEntityResult<Subscription>[] = [];
+    const pages = this.tableClient.listEntities<Subscription>({
+      queryOptions: {
+        filter: odata`PartitionKey eq ${uid}`,
+      },
+    });
+
+    for await (const entity of pages) {
+      if (entity.expirationTime !== null && now >= entity.expirationTime) {
+        removal.push(entity);
+      } else {
+        result.push(entity);
+      }
+      break;
+    }
+
+    if (removal.length > 0) {
+      const _ = this.tableClient.submitTransaction(
+        removal.map(({ partitionKey, rowKey }) => [
+          'delete',
+          { partitionKey, rowKey },
+        ])
+      );
+    }
+
     return result;
   }
 }
