@@ -11,18 +11,19 @@ export async function updateSubscriptionIfExist(
   ) {
     const reg = await navigator.serviceWorker.ready;
     let sub = await reg.pushManager.getSubscription();
-    if (
-      sub &&
-      sub.expirationTime &&
-      !(Date.now() > sub.expirationTime - 7 * DAY)
-    ) {
-      sub = await subscribe(reg, publicKey);
-      return [reg, sub];
-    }
+    if (sub) {
+      if (
+        sub.expirationTime &&
+        !(Date.now() > sub.expirationTime - 7 * DAY)
+      ) {
+        sub = await subscribe(reg, publicKey);
+        return [reg, sub];
+      }
 
-    const res = await fetch(`/api/sub/${encodeURIComponent(sub.endpoint)}`);
-    if (res.ok) {
-      return [reg, sub];
+      const res = await fetch(`/api/sub/${encodeURIComponent(sub.endpoint)}`);
+      if (res.ok) {
+        return [reg, sub];
+      }
     }
 
     return [reg, null];
