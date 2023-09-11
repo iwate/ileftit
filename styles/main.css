@@ -57,7 +57,7 @@ main {
 .btn-text {
   text-decoration: none;
   color: var(--color-primary);
-  font-size: .5em;
+  font-size: .8em;
   background-color: transparent;
   border: none;
   margin: 8px 0;
@@ -230,8 +230,10 @@ hr {
 }
 
 table {
-  font-size: 0.5em;
   width: 100%;
+}
+thead, tbody {
+  font-size: 0.5em;
 }
 th, td {
   text-align: center;
@@ -243,7 +245,7 @@ thead tr {
   margin-bottom: 16px;
 }
 caption {
-  font-size: 2em;
+  font-size: 1em;
   padding: 16px 0;
 }
 
