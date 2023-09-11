@@ -66,6 +66,71 @@ export default function Home() {
           footprint with peace of mind.
         </p>
       </section>
+      <section>
+        <h2 id="core-design">Core Design</h2>
+        <ul>
+          <li>
+            Client-Side Encryption
+            <ul>
+              <li>
+                The app generates secret values: <i>key</i>, <i>iv</i>, and{' '}
+                <i>salt</i> in the browser.
+              </li>
+              <li>
+                The app creates a <i>crypto key</i> from <i>key</i> and{' '}
+                <i>salt</i> with PBKDF2 using 100,000 iterations in the browser.
+              </li>
+              <li>
+                The app encrypts plain text using <i>crypto key</i> and{' '}
+                <i>iv</i> with AES256-GCM in the browser.
+              </li>
+              <li>
+                The app creates an <i>auth key</i> from the <i>crypto key</i>{' '}
+                using SHA-512.
+              </li>
+              <li>
+                The app sends the <i>encrypted data</i> and the <i>auth key</i>{' '}
+                to the server to persist and receives an ID for the item.
+              </li>
+              <li>
+                The app shows the URL of the item and the secret for opening it.
+              </li>
+              <li>The user copies them and shares them with anyone.</li>
+            </ul>
+          </li>
+          <li>
+            Timed Access
+            <ul>
+              <li>
+                Anyone cannot try decrypting the item before open time even if
+                the user is owner.
+              </li>
+              <li>The owner user of the item can extends its open time.</li>
+            </ul>
+          </li>
+          <li>
+            Security risks
+            <ul>
+              <li>
+                If a user account is compromised, there is a possibility of
+                adding, deleting, replacing, or extending the publication date
+                of data, but the contents of the data will not be viewed.
+              </li>
+              <li>
+                Even if the secret for decryption is leaked, the contents of the
+                data will not be exposed immediately as long as the publication
+                date has not been reached.
+              </li>
+              <li>
+                Even if the server is compromised, the data is encrypted, and
+                the decryption key is not stored on the server, so the contents
+                of the data will not be exposed immediately, but it may be
+                susceptible to brute force attacks.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
     </main>
   );
 }
