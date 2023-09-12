@@ -53,15 +53,21 @@ const fmtTime = new Intl.DateTimeFormat(defaultLocale, {
   minute: '2-digit',
   second: '2-digit',
 });
-function DateTime({timestamp}) {
+function DateTime({ timestamp }) {
   const [date, setDate] = useState<string>();
   const [time, setTime] = useState<string>();
   useEffect(() => {
     const d = new Date(timestamp);
     setDate(fmtDate.format(d));
     setTime(fmtTime.format(d));
-  }, [timestamp])
-  return <>{date}<br/>{time}</>
+  }, [timestamp]);
+  return (
+    <>
+      {date}
+      <br />
+      {time}
+    </>
+  );
 }
 function History() {
   const { t } = useLocale();
@@ -86,30 +92,60 @@ function History() {
         </thead>
         <tbody>
           <tr>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
           </tr>
           <tr>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
           </tr>
           <tr>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
-            <td><div className="skelton"></div></td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
+            <td>
+              <div className="skelton"></div>
+            </td>
           </tr>
         </tbody>
         <tfoot></tfoot>
       </table>
-    )
+    );
   }
   return (
     <table className="history">
@@ -129,7 +165,7 @@ function History() {
           .map((o) => (
             <tr key={o.rowKey}>
               <td>
-                <DateTime timestamp={o.timestamp}/>
+                <DateTime timestamp={o.timestamp} />
               </td>
               <td>
                 {o.title}
@@ -186,11 +222,13 @@ function OpenAt({ date }: { date: Date }) {
   const dt = date.getTime() - today.getTime();
   const [label, setLabel] = useState<string>();
   useEffect(() => {
-    setLabel(`${t.LabelOpenAt} ${normalize(
-      dt > 0 && dt < $1day ? fmtTime.format(date) : fmtDate.format(date)
-    )}`);
+    setLabel(
+      `${t.LabelOpenAt} ${normalize(
+        dt > 0 && dt < $1day ? fmtTime.format(date) : fmtDate.format(date)
+      )}`
+    );
   }, [date]);
-  return <small className={label?'':'skelton'}>{label}</small>;
+  return <small className={label ? '' : 'skelton'}>{label}</small>;
 }
 
 function NotificationForm({ publicKey }) {
