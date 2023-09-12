@@ -42,25 +42,75 @@ const getKey = (pageIndex, prev) => {
     prev.items[prev.items.length - 1].rowKey
   }`;
 };
+const defaultLocale = Intl.DateTimeFormat().resolvedOptions().locale;
+const fmtDate = new Intl.DateTimeFormat(defaultLocale, {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+const fmtTime = new Intl.DateTimeFormat(defaultLocale, {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+});
+function DateTime({timestamp}) {
+  const [date, setDate] = useState<string>();
+  const [time, setTime] = useState<string>();
+  useEffect(() => {
+    const d = new Date(timestamp);
+    setDate(fmtDate.format(d));
+    setTime(fmtTime.format(d));
+  }, [timestamp])
+  return <>{date}<br/>{time}</>
+}
 function History() {
-  const { t, locale } = useLocale();
-  const fmth = new Intl.DateTimeFormat(locale, {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-  const fmtl = new Intl.DateTimeFormat(locale, {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
+  const { t } = useLocale();
   const { data, error, size, setSize, isLoading } = useSWRInfinite(
     getKey,
     fetcher
   );
   const more = () => setSize(size + 1);
   if (error) return <div className="text-center">Failed to load</div>;
-  if (!data) return <div></div>;
+  if (!data) {
+    return (
+      <table className="history">
+        <caption>Operation Logs</caption>
+        <thead>
+          <tr>
+            <th>timestamp</th>
+            <th>item(ID)</th>
+            <th>status</th>
+            <th>op</th>
+            <th>ip</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+          </tr>
+          <tr>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+          </tr>
+          <tr>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+            <td><div className="skelton"></div></td>
+          </tr>
+        </tbody>
+        <tfoot></tfoot>
+      </table>
+    )
+  }
   return (
     <table className="history">
       <caption>Operation Logs</caption>
@@ -79,9 +129,7 @@ function History() {
           .map((o) => (
             <tr key={o.rowKey}>
               <td>
-                {fmth.format(new Date(o.timestamp))}
-                <br />
-                {fmtl.format(new Date(o.timestamp))}
+                <DateTime timestamp={o.timestamp}/>
               </td>
               <td>
                 {o.title}
@@ -131,25 +179,18 @@ const loadExtendHours = (defaultValue: number) => {
 };
 
 function OpenAt({ date }: { date: Date }) {
-  const { t, locale } = useLocale();
-  const fmt1 = new Intl.DateTimeFormat(locale, {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-  const fmt2 = new Intl.DateTimeFormat(locale, {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
+  const { t } = useLocale();
   const normalize = (str: string) => str.replace(/\s/g, ' ');
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const dt = date.getTime() - today.getTime();
-  const label = `${t.LabelOpenAt} ${normalize(
-    dt > 0 && dt < $1day ? fmt2.format(date) : fmt1.format(date)
-  )}`;
-  return <small>{label}</small>;
+  const [label, setLabel] = useState<string>();
+  useEffect(() => {
+    setLabel(`${t.LabelOpenAt} ${normalize(
+      dt > 0 && dt < $1day ? fmtTime.format(date) : fmtDate.format(date)
+    )}`);
+  }, [date]);
+  return <small className={label?'':'skelton'}>{label}</small>;
 }
 
 function NotificationForm({ publicKey }) {
