@@ -68,9 +68,9 @@ export default function Home() {
       </section>
       <section>
         <h2 id="core-design">Core Design</h2>
-        <ul>
-          <li>
-            Client-Side Encryption
+        <dl>
+          <dt>Client-Side Encryption</dt>
+          <dd>
             <ul>
               <li>
                 The app generates secret values: <i>key</i>, <i>iv</i>, and{' '}
@@ -97,9 +97,9 @@ export default function Home() {
               </li>
               <li>The user copies them and shares them with anyone.</li>
             </ul>
-          </li>
-          <li>
-            Timed Access
+          </dd>
+          <dt>Timed Access</dt>
+          <dd>
             <ul>
               <li>
                 Anyone cannot try decrypting the item before open time even if
@@ -107,9 +107,9 @@ export default function Home() {
               </li>
               <li>The owner user of the item can extends its open time.</li>
             </ul>
-          </li>
-          <li>
-            Security risks
+          </dd>
+          <dt>Security risks</dt>
+          <dd>
             <ul>
               <li>
                 If a user account is compromised, there is a possibility of
@@ -128,8 +128,8 @@ export default function Home() {
                 susceptible to brute force attacks.
               </li>
             </ul>
-          </li>
-        </ul>
+          </dd>
+        </dl>
       </section>
     </main>
   );

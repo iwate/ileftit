@@ -308,6 +308,17 @@ footer ul {
   padding: 24px 0;
 }
 
+#lp ul {
+  padding-left: 2em;
+  list-style: disc;
+}
+
+#lp li {
+  font-size: 0.75rem;
+  line-height: 2em;
+}
+
+
 .page {
   display: flex;
   flex-direction: column;
