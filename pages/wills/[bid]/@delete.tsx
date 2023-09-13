@@ -40,15 +40,11 @@ export default function Page({ bid, title }) {
     <main>
       <form className="form-vertical" onSubmit={handleSubmit(onSubmit)}>
         <dl>
-          <dt>
-          </dt>
+          <dt></dt>
           <dd>
             <label className={themeFont.className}>
               for
-              <input
-                defaultValue={title}
-                readOnly
-              />
+              <input defaultValue={title} readOnly />
             </label>
           </dd>
         </dl>
