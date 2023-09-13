@@ -1,4 +1,4 @@
-import { SessionProvider, useSession } from 'next-auth/react';
+import { SessionProvider, signOut, useSession } from 'next-auth/react';
 import { themeFont } from '../utils/fonts';
 import '../styles/reset.css';
 import '../styles/main.css';
@@ -30,7 +30,15 @@ function Footer() {
               <Link href="/api/auth/password">Change Password</Link>
             </li>
             <li>
-              <Link href="/api/auth/quit">Quit Account</Link>
+              <a
+                href="/api/auth/quit"
+                onClick={(e) => {
+                  e.preventDefault();
+                  signOut({ callbackUrl: '/api/auth/quit/' });
+                }}
+              >
+                Quit Account
+              </a>
             </li>
           </ul>
         )}
