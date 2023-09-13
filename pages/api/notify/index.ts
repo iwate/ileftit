@@ -28,7 +28,6 @@ async function post(req: NextApiRequest, res: NextApiResponse) {
       JSON.stringify({
         title: 'I left it',
         body: 'Do you extend open time for your data?',
-        actions: [{ action: 'open', title: 'Open app.' }],
       })
     );
   }
