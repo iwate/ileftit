@@ -9,13 +9,16 @@ function Footer() {
   const { data: session } = useSession();
   return (
     <footer>
+      <section>
       <ul>
-        <li>&copy;2023 &apos;I left it&apos;</li>
         <li>
           <Link href="/tos/">Term of Service</Link>
         </li>
         <li>
           <Link href="/privacy/">Privacy policy</Link>
+        </li>
+        <li>
+          <Link href="https://github.com/iwate/ileftit">Source Code</Link>
         </li>
       </ul>
       {session?.user && (
@@ -31,6 +34,8 @@ function Footer() {
           </li>
         </ul>
       )}
+      </section>
+      <p>&copy;2023 &apos;I left it&apos;</p>
     </footer>
   );
 }
