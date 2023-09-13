@@ -27,10 +27,10 @@ function Footer() {
               <Link href="/api/auth/logout">Sign out</Link>
             </li>
             <li>
-              <Link href="/api/auth/password'">Change Password</Link>
+              <Link href="/api/auth/password">Change Password</Link>
             </li>
             <li>
-              <Link href="/api/auth/quit'">Quit Account</Link>
+              <Link href="/api/auth/quit">Quit Account</Link>
             </li>
           </ul>
         )}
