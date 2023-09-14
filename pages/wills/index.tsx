@@ -372,7 +372,7 @@ export default function Home({ items, publicKey }) {
         <ul>
           <li>
             <Image src="/img/pr.png" width={64} height={64} alt="PR" />
-            <p>Monthly sponsors can PR at here.</p>
+            <p>{t.DescPRs}</p>
             <Link href="https://github.com/sponsors/iwate">
               https://github.com/sponsors/iwate
             </Link>
@@ -426,7 +426,7 @@ export default function Home({ items, publicKey }) {
           <li>...</li>
           <li>
             <small>
-              All sponsors can be listed here.
+              {t.DescSponsors}
               <wbr />
               <Link href="https://github.com/sponsors/iwate">
                 https://github.com/sponsors/iwate

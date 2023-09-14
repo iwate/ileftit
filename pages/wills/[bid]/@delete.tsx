@@ -57,7 +57,7 @@ export default function Page({ bid, title }) {
             />
             {errors.confirm?.type === 'required' && <p>required</p>}
             {errors.confirm?.type === 'pattern' && (
-              <p>Please input &quot;yes&quot;</p>
+              <p>{t.ValidationYes}</p>
             )}
           </dd>
         </dl>

@@ -25,8 +25,11 @@ export default {
     MessageCreated: "You must copy the following text and share to the recipient of saved message.\nYou never see this text again.",
     ValidationRequired: "This field is required.",
     ValidationMaxLength: "This field must be {0} characters or fewer.",
+    ValidationYes: "Please input \"yes\" to delete.",
     PlaceholderFor: "Someone",
     PlaceholderReplaceText: "Input whole text again.",
     PlaceholderReplacePassword: "Input password gotten at created",
-    PlaceholderViewPassword: "Password"
+    PlaceholderViewPassword: "Password",
+    DescPRs: "Monthly sponsors can PR at here.",
+    DescSponsors: "All sponsors can be listed here."
 }
