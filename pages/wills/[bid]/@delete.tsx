@@ -56,9 +56,7 @@ export default function Page({ bid, title }) {
               {...register('confirm', { required: true, pattern: /^yes$/ })}
             />
             {errors.confirm?.type === 'required' && <p>required</p>}
-            {errors.confirm?.type === 'pattern' && (
-              <p>{t.ValidationYes}</p>
-            )}
+            {errors.confirm?.type === 'pattern' && <p>{t.ValidationYes}</p>}
           </dd>
         </dl>
         <dl>
