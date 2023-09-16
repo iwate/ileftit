@@ -1,65 +1,27 @@
-[![E2E tests](https://github.com/staticwebdev/nextjs-starter/actions/workflows/playwright.js.yml/badge.svg)](https://github.com/staticwebdev/nextjs-starter/actions/workflows/playwright.js.yml)
+The ultimate web service for safeguarding your confidential text data. 
 
-# Next.js starter
+https://ileftit.com/
 
-[Azure Static Web Apps](https://docs.microsoft.com/azure/static-web-apps/overview) allows you to easily build [Next.js](https://nextjs.org/) apps in minutes. Use this repo with the [Next.js tutorial](https://docs.microsoft.com/azure/static-web-apps/deploy-nextjs) to build and customize a new static site.
+## Core Design
 
-## Running locally
+### Client-Side Encryption
 
-To run locally, open the development server with the following command:
+- The app generates secret values: **key**, **iv**, and **salt** in the browser.
+- The app creates a **crypto key** from **key** and **salt** with PBKDF2 using 100,000 iterations in the browser.
 
-```bash
-npm run dev
-```
+- The app encrypts plain text using **crypto key** and **iv** with AES256-GCM in the browser.
+- The app creates an **auth key** from the **crypto key** using SHA-512.
+- The app sends the **encrypted data** and the **auth key** to the server to persist and receives an ID for the item.
+- The app shows the URL of the item and the secret for opening it.
+- The user copies them and shares them with anyone.
+            
+### Timed Access
 
-Next, open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
+- Anyone cannot try decrypting the item before open time even if the user is owner.
+- The owner user of the item can extends its open time.
 
-For a more rich local development experience, refer to [Set up local development for Azure Static Web Apps](https://docs.microsoft.com/azure/static-web-apps/local-development).
+### Security risks
 
-## How it works
-
-This starter application is configured to build a static site with dynamic routes. 
-
-### Dynamic routes
-
-The *pages/project/[slug].js* file implements code that tells Next.js what pages to generate based on associated data. In Next.js, each page powered by dynamic routes needs to implement `getStaticPaths` and `getStaticProps` to give Next.js the information it needs to build pages that match possible route values.
-
-Inside `getStaticPaths`, each data object is used to create a list of paths all possible pages.
-
-```javascript
-export async function getStaticPaths() {
-  const paths = projects.map((project) => ({
-    params: { path: project.slug },
-  }))
-  return { paths, fallback: false };
-}
-```
-The `getStaticProps` function is run each time a page is generated. Based off the parameter values, the function matches the full data object to the page being generated. Once the data object is returned, it is used as the context for the generated page.
-
-```javascript
-export async function getStaticProps({ params }) {
-  const project = projects.find(proj => proj.slug === params.path);
-  return { props: { project } };
-}
-```
-### Application configuration
-
-The `next.config.js` file is set up to enforce trailing slashes on all page.
-
-```javascript
-module.exports = {
-    trailingSlash: true
-};
-```
-### Build scripts
-
-The npm `build` script runs commands to not only build the application, but also generate all the static files to the `out` folder.
-
-```json
-"scripts": {
-  "dev": "next dev",
-  "build": "next build && next export",
-},
-```
-
-> **Note:** If you use the [Azure Static Web Apps CLI](https://docs.microsoft.com/azure/static-web-apps/local-development), copy the *staticwebapp.config.json* file to the *out* folder, and start the CLI from the *out* folder.
+- If a user account is compromised, there is a possibility of adding, deleting, replacing, or extending the publication date of data, but the contents of the data will not be viewed.
+- Even if the secret for decryption is leaked, the contents of the data will not be exposed immediately as long as the publication date has not been reached.
+- Even if the server is compromised, the data is encrypted, and the decryption key is not stored on the server, so the contents of the data will not be exposed immediately, but it may be susceptible to brute force attacks.
