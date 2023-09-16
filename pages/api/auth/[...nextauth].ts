@@ -19,8 +19,6 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
   const b2cPasswordResetErrorCode = 'AADB2C90118'; // error_description: 'AADB2C90118: The user has forgotten their password.\r\n'
   const b2cPasswordResetCancelErrorCode = 'AADB2C90091'; // error_description: 'AADB2C90091: The user has cancelled entering self-asserted information.\r\n'
 
-  console.log('Hello');
-  console.log(req.method, req.url, req.body);
   if (
     req.method === 'GET' &&
     req.url.startsWith(`/api/auth/callback/${b2cProviderName}/`)
@@ -82,6 +80,10 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
       }),
     ],
     callbacks: {
+      async redirect({ url, baseUrl }) {
+        console.log('REDIRECT', url)
+        return url
+      },
       async jwt({ token, account }) {
         if (account) {
           token.uid = account.providerAccountId.replaceAll('-', '');
