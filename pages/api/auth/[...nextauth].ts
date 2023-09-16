@@ -80,10 +80,6 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
       }),
     ],
     callbacks: {
-      async redirect({ url, baseUrl }) {
-        console.log('REDIRECT', url)
-        return url
-      },
       async jwt({ token, account }) {
         if (account) {
           token.uid = account.providerAccountId.replaceAll('-', '');
