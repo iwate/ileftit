@@ -142,6 +142,7 @@ function decrypt(key: Buffer, data: Buffer) {
 
 export const setSubscription: ISubscriptionStore['set'] = subs.set.bind(subs);
 export const getSubscription: ISubscriptionStore['get'] = subs.get.bind(subs);
+export const getSubscriptions: ISubscriptionStore['list'] = subs.list.bind(subs);
 export const deleteSubscription: ISubscriptionStore['remove'] = subs.remove.bind(subs);
 export async function* listSubscriptions(
   from: Date = new Date(),

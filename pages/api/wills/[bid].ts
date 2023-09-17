@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { log, retrieve } from '../../../src/server/model';
+import { deleteSubscription, getSubscriptions, log, retrieve } from '../../../src/server/model';
 import { getToken } from 'next-auth/jwt';
 import { getIp } from '../../../src/server/ip';
+import webpush from 'web-push';
 
 export default function handle(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
@@ -26,7 +27,35 @@ async function post(req: NextApiRequest, res: NextApiResponse) {
 
   const will = await retrieve(uid, bid);
 
-  if (will === null || !will.authorize(password)) {
+  if (will === null) {
+    res.status(401).end();
+    return;
+  }
+
+  webpush.setVapidDetails(
+    'mailto:noreply@ileftit.com',
+    process.env.WEBPUSH_PUBLIC_KEY,
+    process.env.WEBPUSH_PRIVATE_KEY
+  );
+  const subs = await getSubscriptions(uid);
+  for (let sub of subs) {
+    const info = JSON.parse(sub.json);
+    try {
+      webpush.sendNotification(
+        info,
+        JSON.stringify({
+          title: 'I left it',
+          body: 'Someone try authorizing your data. Please check logs on the app.',
+        })
+      );
+    } catch (ex) {
+      if (ex.statusCode === 410) {
+        deleteSubscription(uid, info.endpoint);
+      }
+    }
+  }
+
+  if (!will.authorize(password)) {
     await log(uid, bid, will.title, will.status, 'unauthorized', ip);
     res.status(401).end();
     return;
