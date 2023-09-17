@@ -235,6 +235,7 @@ export interface ISubscriptionStore {
     expirationTime: number
   ): Promise<void>;
   get(uid: string, endpoint: string): Promise<string>;
+  remove(uid: string, endpoint: string): Promise<void>;
   list(uid: string): Promise<Subscription[]>;
 }
 export class AzureStorageSubscriptionStore implements ISubscriptionStore {
@@ -268,6 +269,14 @@ export class AzureStorageSubscriptionStore implements ISubscriptionStore {
       return null;
     }
     return entity?.json;
+  }
+  async remove(
+    uid: string,
+    endpoint: string
+  ): Promise<void> {
+    const rowKey = createHash('sha1').update(endpoint).digest('hex');
+    const entity = await this.tableClient.getEntity<Subscription>(uid, rowKey);
+    await this.tableClient.deleteEntity(uid, endpoint);
   }
   async list(uid: string, now: number = Date.now()): Promise<Subscription[]> {
     const result: Subscription[] = [];

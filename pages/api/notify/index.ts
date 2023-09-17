@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { listSubscriptions } from '../../../src/server/model';
+import { deleteSubscription, listSubscriptions } from '../../../src/server/model';
 import webpush from 'web-push';
 
 export default function handle(req: NextApiRequest, res: NextApiResponse) {
@@ -22,14 +22,21 @@ async function post(req: NextApiRequest, res: NextApiResponse) {
     process.env.WEBPUSH_PRIVATE_KEY
   );
   const subs = listSubscriptions();
-  for await (let json of subs) {
-    webpush.sendNotification(
-      JSON.parse(json),
-      JSON.stringify({
-        title: 'I left it',
-        body: 'Do you extend open time for your data?',
-      })
-    );
+  for await (let [uid, json] of subs) {
+    const info = JSON.parse(json);
+    try {
+      webpush.sendNotification(
+        info,
+        JSON.stringify({
+          title: 'I left it',
+          body: 'Do you extend open time for your data?',
+        })
+      );
+    } catch (ex) {
+      if (ex.statusCode === 410) {
+        deleteSubscription(uid, info.endpoint);
+      }
+    }
   }
   res.status(204).end();
 }
