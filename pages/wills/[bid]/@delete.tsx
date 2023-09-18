@@ -53,6 +53,7 @@ export default function Page({ bid, title }) {
           <dd>
             <p>{t.MessageDelete}</p>
             <input
+              placeholder={t.ValidationYes}
               {...register('confirm', { required: true, pattern: /^yes$/ })}
             />
             {errors.confirm?.type === 'required' && <p>required</p>}
