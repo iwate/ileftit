@@ -290,7 +290,6 @@ export class AzureStorageSubscriptionStore implements ISubscriptionStore {
       } else {
         result.push(entity);
       }
-      break;
     }
 
     if (removal.length > 0) {
