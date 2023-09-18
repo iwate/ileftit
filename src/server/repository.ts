@@ -270,10 +270,7 @@ export class AzureStorageSubscriptionStore implements ISubscriptionStore {
     }
     return entity?.json;
   }
-  async remove(
-    uid: string,
-    endpoint: string
-  ): Promise<void> {
+  async remove(uid: string, endpoint: string): Promise<void> {
     const rowKey = createHash('sha1').update(endpoint).digest('hex');
     const entity = await this.tableClient.getEntity<Subscription>(uid, rowKey);
     await this.tableClient.deleteEntity(uid, endpoint);

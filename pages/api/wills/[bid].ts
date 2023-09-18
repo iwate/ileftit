@@ -1,5 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { deleteSubscription, getSubscriptions, log, retrieve } from '../../../src/server/model';
+import {
+  deleteSubscription,
+  getSubscriptions,
+  log,
+  retrieve,
+} from '../../../src/server/model';
 import { getToken } from 'next-auth/jwt';
 import { getIp } from '../../../src/server/ip';
 import webpush from 'web-push';

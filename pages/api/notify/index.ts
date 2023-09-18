@@ -1,5 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { deleteSubscription, listSubscriptions } from '../../../src/server/model';
+import {
+  deleteSubscription,
+  listSubscriptions,
+} from '../../../src/server/model';
 import webpush from 'web-push';
 
 export default function handle(req: NextApiRequest, res: NextApiResponse) {
