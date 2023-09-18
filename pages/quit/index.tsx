@@ -47,7 +47,12 @@ export default function Page({ itemsCount, subsCount }) {
             <dl>
               <dt></dt>
               <dd>
-                <p>{t.MessageHasData.replaceAll('{0}', itemsCount).replaceAll('{1}', subsCount)}</p>
+                <p>
+                  {t.MessageHasData.replaceAll('{0}', itemsCount).replaceAll(
+                    '{1}',
+                    subsCount
+                  )}
+                </p>
                 <input
                   {...register('confirm', { required: true, pattern: /^yes$/ })}
                 />

@@ -1,4 +1,9 @@
-import { TableClient, TableEntityResult, TransactionAction, odata } from '@azure/data-tables';
+import {
+  TableClient,
+  TableEntityResult,
+  TransactionAction,
+  odata,
+} from '@azure/data-tables';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { createHash } from 'crypto';
 
@@ -327,7 +332,7 @@ export class AzureStorageSubscriptionStore implements ISubscriptionStore {
         filter: odata`PartitionKey eq ${uid}`,
       },
     });
-    for await (const {partitionKey, rowKey} of pages) {
+    for await (const { partitionKey, rowKey } of pages) {
       actions.push(['delete', { partitionKey, rowKey }]);
     }
     if (actions.length > 0) {

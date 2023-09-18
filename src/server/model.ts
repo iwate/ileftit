@@ -194,8 +194,5 @@ export function listSubscriptionsNecessaryToPushPredicator(
 }
 
 export async function deleteAll(uid: string) {
-  await Promise.all([
-    repo.deleteAll(uid),
-    subs.deleteAll(uid)
-  ]);
+  await Promise.all([repo.deleteAll(uid), subs.deleteAll(uid)]);
 }
