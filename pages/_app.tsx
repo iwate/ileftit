@@ -30,15 +30,7 @@ function Footer() {
               <Link href="/api/auth/password">Change Password</Link>
             </li>
             <li>
-              <a
-                href="/api/auth/quit"
-                onClick={(e) => {
-                  e.preventDefault();
-                  signOut({ callbackUrl: '/api/auth/quit/' });
-                }}
-              >
-                Quit Account
-              </a>
+              <Link href="/quit/">Quit Account</Link>
             </li>
           </ul>
         )}

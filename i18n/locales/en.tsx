@@ -23,6 +23,8 @@ export default {
     MessageCloseUnverified: "This message doesn't past open time yet.",
     MessageCloseVerified: "This message will be opened at {0}.",
     MessageCreated: "You must copy the following text and share to the recipient of saved message.\nYou never see this text again.",
+    MessageHasData: "You need to delete your data before quit account. \nAre you sure you want to delete {0} items and {1} notifications settings?",
+    MessageCanQuit: "You can quit account.",
     ValidationRequired: "This field is required.",
     ValidationMaxLength: "This field must be {0} characters or fewer.",
     ValidationYes: "Please input \"yes\" to delete.",
@@ -31,5 +33,6 @@ export default {
     PlaceholderReplacePassword: "Input password gotten at created",
     PlaceholderViewPassword: "Password",
     DescPRs: "Monthly sponsors can PR at here.",
-    DescSponsors: "All sponsors can be listed here."
+    DescSponsors: "All sponsors can be listed here.",
+    DescQuit: "It going to show login page to authorize account before quitting."
 }

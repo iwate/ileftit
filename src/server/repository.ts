@@ -1,4 +1,4 @@
-import { TableClient, TableEntityResult, odata } from '@azure/data-tables';
+import { TableClient, TableEntityResult, TransactionAction, odata } from '@azure/data-tables';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { createHash } from 'crypto';
 
@@ -30,6 +30,7 @@ export interface IRepository {
   ): Promise<void>;
   remove(uid: string, bid: string, meta: Metadata): Promise<void>;
   filter(from: Date, to: Date);
+  deleteAll(uid: string): Promise<void>;
 }
 
 export class AzureStorageRepository implements IRepository {
@@ -122,6 +123,22 @@ export class AzureStorageRepository implements IRepository {
     const blobClient = this.containerClient.getBlockBlobClient(meta.blobPath);
     await this.tableClient.deleteEntity(uid, bid);
     await blobClient.delete();
+  }
+
+  async deleteAll(uid: string): Promise<void> {
+    const entities = this.tableClient.listEntities<Metadata>({
+      queryOptions: { filter: odata`PartitionKey eq ${uid}` },
+    });
+
+    const tasks = [];
+    for await (const { rowKey, blobPath } of entities) {
+      const blobClient = this.containerClient.getBlockBlobClient(blobPath);
+      tasks.push(
+        this.tableClient.deleteEntity(uid, rowKey),
+        blobClient.delete()
+      );
+    }
+    await Promise.all(tasks);
   }
 }
 
@@ -237,6 +254,7 @@ export interface ISubscriptionStore {
   get(uid: string, endpoint: string): Promise<string>;
   remove(uid: string, endpoint: string): Promise<void>;
   list(uid: string): Promise<Subscription[]>;
+  deleteAll(uid: string): Promise<void>;
 }
 export class AzureStorageSubscriptionStore implements ISubscriptionStore {
   private tableClient = TableClient.fromConnectionString(
@@ -271,8 +289,6 @@ export class AzureStorageSubscriptionStore implements ISubscriptionStore {
     return entity?.json;
   }
   async remove(uid: string, endpoint: string): Promise<void> {
-    const rowKey = createHash('sha1').update(endpoint).digest('hex');
-    const entity = await this.tableClient.getEntity<Subscription>(uid, rowKey);
     await this.tableClient.deleteEntity(uid, endpoint);
   }
   async list(uid: string, now: number = Date.now()): Promise<Subscription[]> {
@@ -302,5 +318,20 @@ export class AzureStorageSubscriptionStore implements ISubscriptionStore {
     }
 
     return result;
+  }
+
+  async deleteAll(uid: string): Promise<void> {
+    const actions: TransactionAction[] = [];
+    const pages = this.tableClient.listEntities<Subscription>({
+      queryOptions: {
+        filter: odata`PartitionKey eq ${uid}`,
+      },
+    });
+    for await (const {partitionKey, rowKey} of pages) {
+      actions.push(['delete', { partitionKey, rowKey }]);
+    }
+    if (actions.length > 0) {
+      await this.tableClient.submitTransaction(actions);
+    }
   }
 }
