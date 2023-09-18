@@ -63,13 +63,13 @@ export default function Page() {
     }
   };
   const gotoTop = () => router.push('/');
-  const result = `## URL 
-https://${location.host}/view/${created?.uid}/${created?.bid}
+  const result = () => `## URL 
+https://${window.location.host}/view/${created?.uid}/${created?.bid}
 
 ## Password
 ${created?.secret}`;
   const copy: MouseEventHandler<HTMLButtonElement> = (e) => {
-    window.navigator.clipboard.writeText(result).then(() => {
+    window.navigator.clipboard.writeText(result()).then(() => {
       setCopyText(t.ActionCopied);
       setTimeout(() => setCopyText(t.ActionCopy), 2000);
     });
@@ -84,7 +84,7 @@ ${created?.secret}`;
               {t.MessageCreated.split('\n').map((line) => (
                 <p key={line}>{line}</p>
               ))}
-              <textarea rows={20} readOnly defaultValue={result}></textarea>
+              <textarea rows={20} readOnly defaultValue={result()}></textarea>
             </dd>
           </dl>
           {window.navigator.clipboard && (
