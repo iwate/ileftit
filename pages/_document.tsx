@@ -27,7 +27,8 @@ export default class Document extends NextDocument {
           <link rel="manifest" href="/site.webmanifest" />
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
           <meta name="msapplication-TileColor" content="#da532c" />
-          <meta name="theme-color" content="#ffffff" />
+          <meta name="theme-color" content="#fff" media="(prefers-color-scheme: light)"/>
+          <meta name="theme-color" content="#333" media="(prefers-color-scheme: dark)"/>
           <meta
             name="description"
             content="The ultimate web service for safeguarding your confidential text data. Our cutting-edge platform empowers you to store your sensitive information securely, putting you in control of your digital privacy."
