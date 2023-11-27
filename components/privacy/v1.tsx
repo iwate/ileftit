@@ -4,7 +4,7 @@ export function PrivacyV1() {
       <h1>Privacy Policy</h1>
       <h2 id="definitions">Definitions</h2>
       <p>
-        &apos;I left it&apos; is owned by
+        &apos;I left it&apos; is owned by{' '}
         <a target="_blank" rel="noopener" href="https://github.com/iwate">
           @iwate
         </a>

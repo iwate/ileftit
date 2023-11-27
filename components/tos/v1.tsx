@@ -4,8 +4,7 @@ export function TermOfServiceV1() {
       <h1>Term of Service</h1>
       <p>
         Please read these terms of service (&quot;terms&quot;, &quot;terms of
-        service&quot;) carefully before using POSH App and License Server(the
-        &quot;service&quot;) operated by
+        service&quot;) carefully before using &apos;I left it&apos; operated by{' '}
         <a target="_blank" rel="noopener" href="https://github.com/iwate">
           @iwate
         </a>
@@ -20,27 +19,27 @@ export function TermOfServiceV1() {
       </p>
       <h2 id="privacy-policy">Privacy Policy</h2>
       <p>
-        Before you continue using our website we advise you to read our
+        Before you continue using our website we advise you to read our{' '}
         <a target="_blank" rel="noopener" href="/privacy">
           privacy policy
-        </a>
+        </a>{' '}
         regarding our user data collection. It will help you better understand
         our practices.
       </p>
       <h2 id="copyright">Copyright</h2>
       <p>
         Content published on this service (digital downloads, images, texts,
-        graphics, logos) is the property of
+        graphics, logos) is the property of{' '}
         <a target="_blank" rel="noopener" href="https://github.com/iwate">
           @iwate
-        </a>
+        </a>{' '}
         and/or its content creators and protected by Japan copyright laws. The
         entire compilation of the content found on this website is the exclusive
-        property of
+        property of{' '}
         <a target="_blank" rel="noopener" href="https://github.com/iwate">
           @iwate
         </a>
-        , with copyright authorship for this compilation by
+        , with copyright authorship for this compilation by{' '}
         <a target="_blank" rel="noopener" href="https://github.com/iwate">
           @iwate
         </a>
@@ -142,7 +141,8 @@ export function TermOfServiceV1() {
         versions of the Terms of Service).
       </p>
       <p>
-        Questions about the Terms of Service should be sent to ileftit@iwate.me.
+        Questions about the Terms of Service should be sent mail to
+        ileftit@iwate.me.
       </p>
     </>
   );
